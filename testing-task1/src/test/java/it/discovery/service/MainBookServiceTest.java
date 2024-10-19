@@ -1,9 +1,13 @@
 package it.discovery.service;
 
+import it.discovery.model.Book;
 import it.discovery.repository.BookRepository;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockMakers;
+
+import java.time.Duration;
 
 import static it.discovery.util.TestModelUtils.createBook;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,11 +22,20 @@ class MainBookServiceTest {
     @BeforeEach
     void setUp() {
         bookRepository = mock(withSettings().mockMaker(MockMakers.PROXY));
-        bookService = new MainBookService(bookRepository, false);
+        bookService = new MainBookService(bookRepository, true);
     }
 
     @Test
-    void saveBook() {
+    void saveBook_cacheEnabled_bookAvailableInCache() {
+        Book book = createBook();
+        bookService.saveBook(book);
+
+        Awaitility.await().pollDelay(Duration.ofMillis(10))
+                .pollDelay(Duration.ofMillis(10))
+                .atMost(Duration.ofMillis(1000))
+                .until(() -> bookService.findBookById(book.getId()) != null);
+
+        verify(bookRepository).saveBook(book);
     }
 
     @Test

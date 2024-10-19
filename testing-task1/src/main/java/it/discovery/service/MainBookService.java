@@ -2,6 +2,7 @@ package it.discovery.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import it.discovery.model.Book;
@@ -22,11 +23,13 @@ public class MainBookService implements BookService {
 
 	@Override
 	public void saveBook(Book book) {
-		repository.saveBook(book);
-		
-		if(cachingEnabled) {
-			bookCache.put(book.getId(), book);
-		}
+		CompletableFuture.runAsync(() -> {
+			repository.saveBook(book);
+
+			if (cachingEnabled) {
+				bookCache.put(book.getId(), book);
+			}
+		});
 	}
 	
 	@Override

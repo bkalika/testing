@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import static it.discovery.util.TestModelUtils.createBook;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class DBBookRepositoryTest {
 
@@ -50,9 +51,11 @@ class DBBookRepositoryTest {
 
     @Test
     void findBooks_booksPresent_returnSingleBook() {
+        //assumeTrue(repository.findBooks().isEmpty());
+        var size = repository.findBooks().size();
         var book = createBook();
         repository.saveBook(book);
-        assertThat(repository.findBooks()).hasSize(1);
+        assertThat(repository.findBooks()).hasSize(size + 1);
         var book1 = repository.findBooks().getFirst();
         SoftAssertions.assertSoftly(assertions -> {
             assertions.assertThat(book1.getId()).isEqualTo(book.getId());

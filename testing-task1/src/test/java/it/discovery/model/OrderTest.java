@@ -1,52 +1,54 @@
 package it.discovery.model;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static it.discovery.util.TestModelUtils.createBook;
+import static it.discovery.model.util.TestModelUtils.getBook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderTest {
-
-    Order order;
+    private Order order;
+    private Book book;
+    private List<OrderItem> orderItems;
 
     @BeforeEach
     void setUp() {
-        order = new Order(List.of(new OrderItem(createBook(), 1)));
-    }
-
-    @Nested
-    class GetTotalPriceTests {
-        @Test
-        void getTotalPrice_orderWithItems_returnPrice() {
-            assertEquals(400, order.getTotalPrice());
-        }
-
-        @Test
-        void getTotalPrice_orderWithoutItems_returnZero() {
-            var emptyOrder = new Order(List.of());
-            assertEquals(0, emptyOrder.getTotalPrice());
-        }
+        book = getBook();
+        orderItems = List.of(
+                new OrderItem(book, 1),
+                new OrderItem(book, 1)
+        );
+        order = new Order(orderItems);
     }
 
     @Test
-    void initialization_itemsIsNull_error() {
+    void getTotalPriceOrderWithItemsReturnPrice() {
+        assertEquals(800, order.getTotalPrice());
+    }
+
+    @Test
+    void getTotalPriceOrderWithoutItemsReturnZero() {
+        var emptyOrder = new Order(List.of());
+        assertEquals(0, emptyOrder.getTotalPrice());
+    }
+
+    @Test
+    void InitializationItemsIsNullThrowsException() {
         assertThrows(NullPointerException.class, () -> new Order(null));
     }
 
     @Test
     void createOrder() {
-    }
+        book = getBook();
+        Order orderCreated = Order.createOrder(book, 2);
 
-    @Test
-    void complete() {
-    }
-
-    @Test
-    void fail() {
+        List<OrderItem> orderItemsExpected = List.of(
+                new OrderItem(book, 2)
+        );
+        Order orderExpected = new Order(orderItemsExpected);
+        assertEquals(orderExpected, orderCreated);
     }
 }

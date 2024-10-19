@@ -6,6 +6,12 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
+
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Stream;
 
 import static it.discovery.util.TestModelUtils.createBook;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +26,11 @@ class DBBookRepositoryTest {
     void setUp() {
         repository = new DBBookRepository();
     }
+
+    static final Random RANDOM = new Random();
+
+    static final List<Integer> randomIds = Stream.generate(() ->
+            RANDOM.nextInt(Integer.MAX_VALUE)).limit(100).toList();
 
     @Test
     @DisplayName("""
@@ -40,8 +51,10 @@ class DBBookRepositoryTest {
                 .isEqualTo(book);
     }
 
-    @Test
-    void findBookById() {
+    @ParameterizedTest
+    @FieldSource("randomIds")
+    void findBookById_nonExistingId_null(int bookId) {
+        assertThat(repository.findBookById(bookId)).isNull();
     }
 
     @Test

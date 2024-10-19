@@ -32,5 +32,12 @@ public class Book {
 	private int price;
 	
 	private List<Order> orders;
+
+	public void withPages(int pages) {
+		if(pages <=0 ) {
+			throw new IllegalArgumentException(pages + " must be positive number");
+		}
+		this.pages = pages;
+	}
 	
 }

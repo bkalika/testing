@@ -3,6 +3,7 @@ package it.discovery.service;
 import it.discovery.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockMakers;
 
 import static it.discovery.util.TestModelUtils.createBook;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +17,7 @@ class MainBookServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookRepository = mock();
+        bookRepository = mock(withSettings().mockMaker(MockMakers.PROXY));
         bookService = new MainBookService(bookRepository, false);
     }
 

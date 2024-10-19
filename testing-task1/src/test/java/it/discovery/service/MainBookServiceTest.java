@@ -35,6 +35,8 @@ class MainBookServiceTest {
                 .atMost(Duration.ofMillis(1000))
                 .until(() -> bookService.findBookById(book.getId()) != null);
 
+        assertThat(bookService.findBookById(book.getId())).isEqualTo(book);
+
         verify(bookRepository).saveBook(book);
     }
 

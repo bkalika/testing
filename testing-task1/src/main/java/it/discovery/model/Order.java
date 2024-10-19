@@ -4,17 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 public class Order {
-
+	
 	private int id;
 
 	private LocalDateTime createdAt;
@@ -57,7 +53,7 @@ public class Order {
 		if(state == OrderState.COMPLETED) {
 			throw new IllegalStateException("Order " + id + " can'be failed because it was already completed");
 		}
-
+		
 		state = OrderState.ERROR;
 		this.errorDescription = errorDescription;
 	}

@@ -1,12 +1,12 @@
 package it.discovery.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class OrderItem {
 	
 	private Book book;

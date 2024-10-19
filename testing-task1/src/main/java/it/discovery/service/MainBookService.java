@@ -26,7 +26,7 @@ public class MainBookService implements BookService {
 		CompletableFuture.runAsync(() -> {
 			repository.saveBook(book);
 
-			if(cachingEnabled) {
+			if (cachingEnabled) {
 				bookCache.put(book.getId(), book);
 			}
 		});

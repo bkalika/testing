@@ -2,10 +2,13 @@ package it.discovery.repository;
 
 import it.discovery.model.Book;
 import it.discovery.util.TestModelUtils;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static it.discovery.util.TestModelUtils.createBook;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DBBookRepositoryTest {
@@ -23,14 +26,17 @@ class DBBookRepositoryTest {
              1. Identifier value is generate
              2. Book is saved and available in repository""")
     void saveBook_newBook_saved() {
-        var book = TestModelUtils.createBook();
+        var book = createBook();
         repository.saveBook(book);
 
         assertTrue(book.getId() > 0);
         Book book1 = repository.findBookById(book.getId());
         assertNotNull(book1);
         // Compare state of book and book1
-        assertEquals(book, book1);
+        //assertEquals(book, book1);
+        assertThat(book1).usingRecursiveComparison()
+                .withStrictTypeChecking()
+                .isEqualTo(book);
     }
 
     @Test
@@ -38,6 +44,19 @@ class DBBookRepositoryTest {
     }
 
     @Test
-    void findBooks() {
+    void findBooks_emptyStorage_returnEmptyList() {
+        assertThat(repository.findBooks()).isEmpty();
+    }
+
+    @Test
+    void findBooks_booksPresent_returnSingleBook() {
+        var book = createBook();
+        repository.saveBook(book);
+        assertThat(repository.findBooks()).hasSize(1);
+        var book1 = repository.findBooks().getFirst();
+        SoftAssertions.assertSoftly(assertions -> {
+            assertions.assertThat(book1.getId()).isEqualTo(book.getId());
+            assertions.assertThat(book1.getPrice()).isEqualTo(book.getPrice());
+        });
     }
 }

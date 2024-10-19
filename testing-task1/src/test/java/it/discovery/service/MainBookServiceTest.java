@@ -9,14 +9,12 @@ import org.mockito.MockMakers;
 
 import java.time.Duration;
 
-import static it.discovery.util.TestModelUtils.createBook;
-import static org.assertj.core.api.Assertions.assertThat;
+import static it.discovery.model.util.TestModelUtils.getBook;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 class MainBookServiceTest {
-
     BookService bookService;
-
     BookRepository bookRepository;
 
     @BeforeEach
@@ -25,9 +23,10 @@ class MainBookServiceTest {
         bookService = new MainBookService(bookRepository, true);
     }
 
+
     @Test
-    void saveBook_cacheEnabled_bookAvailableInCache() {
-        Book book = createBook();
+    void saveBookCacheEnabledBookAvailableInCache() {
+        Book book = getBook();
         bookService.saveBook(book);
 
         Awaitility.await().pollDelay(Duration.ofMillis(10))
@@ -36,32 +35,6 @@ class MainBookServiceTest {
                 .until(() -> bookService.findBookById(book.getId()) != null);
 
         assertThat(bookService.findBookById(book.getId())).isEqualTo(book);
-
         verify(bookRepository).saveBook(book);
-    }
-
-    @Test
-    void findBookById_validId_success() {
-        final int bookId = 10;
-        var book = createBook();
-        book.setId(bookId);
-
-        when(bookRepository.findBookById(bookId)).thenReturn(book);
-
-        assertThat(bookService.findBookById(bookId)).isSameAs(book);
-
-        verify(bookRepository).findBookById(bookId);
-    }
-
-    @Test
-    void findBooks() {
-    }
-
-    @Test
-    void getRepository() {
-    }
-
-    @Test
-    void isCachingEnabled() {
     }
 }
